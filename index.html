@@ -514,17 +514,17 @@
                     <button class="back-button" onclick="goBack()">←</button>
                     <span>🔬 Калькулятор анализов</span>
                 </div>
+                <div id="cart-info" style="margin-top: 12px; margin-bottom: 12px; padding: 12px; background: var(--tg-theme-secondary-bg-color, #f0f0f0); border-radius: 8px; display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span><strong>В корзине:</strong> <span id="cart-count">0</span> анализов</span>
+                        <span><strong>Сумма:</strong> <span id="cart-total">0</span> ₽</span>
+                    </div>
+                    <button class="button" onclick="window.showCart()" style="margin-top: 0;">Просмотреть корзину</button>
+                </div>
                 <div class="info-card">
                     <div class="category-list" id="calculator-categories">
                         <div class="loading">Загрузка категорий...</div>
                     </div>
-                </div>
-                <div id="cart-info" style="margin-top: 12px; padding: 12px; background: var(--tg-theme-secondary-bg-color, #f0f0f0); border-radius: 8px; display: none;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span><strong>В корзине:</strong> <span id="cart-count">0</span> анализов</span>
-                        <span><strong>Сумма:</strong> <span id="cart-total">0</span> ₽</span>
-                    </div>
-                    <button class="button" onclick="showCart()" style="margin-top: 8px;">Просмотреть корзину</button>
                 </div>
             </div>
 
@@ -533,6 +533,13 @@
                 <div class="section-title">
                     <button class="back-button" onclick="goBack()">←</button>
                     <span id="calculator-category-title">Категория анализов</span>
+                </div>
+                <div id="cart-info-category" style="margin-top: 12px; margin-bottom: 12px; padding: 12px; background: var(--tg-theme-secondary-bg-color, #f0f0f0); border-radius: 8px; display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span><strong>В корзине:</strong> <span id="cart-count-category">0</span> анализов</span>
+                        <span><strong>Сумма:</strong> <span id="cart-total-category">0</span> ₽</span>
+                    </div>
+                    <button class="button" onclick="window.showCart()" style="margin-top: 0;">Просмотреть корзину</button>
                 </div>
                 <input type="text" class="search-box" id="test-search" placeholder="Поиск анализа..." oninput="searchTests()">
                 <div class="info-card">
@@ -567,7 +574,7 @@
                         </div>
                     </div>
                 </div>
-                <button class="button" onclick="clearCart()">Очистить корзину</button>
+                <button class="button" onclick="window.clearCart()">Очистить корзину</button>
                 <button class="button button-secondary" onclick="sendToBot('calculator')">Отправить в бот</button>
             </div>
 
@@ -611,9 +618,13 @@
             console.log('User:', user);
         }
 
-        // Корзина анализов
-        let cart = [];
-        let labTestsData = null;
+        // Корзина анализов (глобальная переменная)
+        window.cart = [];
+        window.labTestsData = null;
+        
+        // Алиасы для обратной совместимости
+        const cart = window.cart;
+        const labTestsData = window.labTestsData;
 
         // Загрузка данных при инициализации
         document.addEventListener('DOMContentLoaded', function() {
@@ -623,6 +634,8 @@
             loadPreparationData();
             loadLabTestsData();
             loadPromotionsData();
+            // Инициализируем корзину
+            updateCartInfo();
         });
 
         // Загрузка контактных данных
@@ -953,6 +966,11 @@
                 appState.currentSection = sectionName;
             }
 
+            // Обновляем информацию о корзине при показе секции калькулятора
+            if (sectionName === 'calculator' || sectionName === 'calculator-category' || sectionName === 'cart') {
+                updateCartInfo();
+            }
+
             // Показываем/скрываем кнопку "Назад"
             if (sectionName === 'main-menu') {
                 tg.BackButton.hide();
@@ -1001,7 +1019,7 @@
                 const response = await fetch('/data/medical/lab_tests_categorized.json');
                 if (response.ok) {
                     const data = await response.json();
-                    labTestsData = data;
+                    window.labTestsData = data;
                     renderCalculatorCategories(data);
                 } else {
                     renderCalculatorCategoriesFallback();
@@ -1068,22 +1086,25 @@
 
             document.getElementById('calculator-category-title').textContent = categoryName;
 
-            if (labTestsData && labTestsData.tests) {
-                const tests = labTestsData.tests.filter(t => 
+            if (window.labTestsData && window.labTestsData.tests) {
+                const tests = window.labTestsData.tests.filter(t => 
                     (t.category === categoryId || t.category_id === categoryId) && t.is_active !== false
                 );
 
                 const container = document.getElementById('tests-list');
                 if (tests.length > 0) {
                     container.innerHTML = tests.map(test => {
-                        const inCart = cart.some(item => item.id === test.id);
+                        const inCart = window.cart.some(item => item.id === test.id);
+                        const testNameEscaped = (test.name || 'Анализ').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                        const testId = test.id;
+                        const testPrice = test.price || 0;
                         return `
                             <div class="service-item" style="display: flex; justify-content: space-between; align-items: center;">
                                 <div style="flex: 1;">
                                     <div class="service-name">${test.name || 'Анализ'}</div>
-                                    <div class="service-price">${test.price || 0} ₽</div>
+                                    <div class="service-price">${testPrice} ₽</div>
                                 </div>
-                                <button class="button" onclick="toggleTestInCart(${test.id}, '${test.name}', ${test.price || 0})" style="width: auto; padding: 8px 16px; margin: 0; margin-left: 8px;">
+                                <button class="button" onclick="window.toggleTestInCart(${testId}, '${testNameEscaped}', ${testPrice})" style="width: auto; padding: 8px 16px; margin: 0; margin-left: 8px; min-width: 100px;">
                                     ${inCart ? '✓ В корзине' : 'Добавить'}
                                 </button>
                             </div>
@@ -1098,15 +1119,16 @@
             }
 
             showSection('calculator-category-section');
+            updateCartInfo();
         }
 
         // Поиск анализов
         function searchTests() {
             const query = document.getElementById('test-search').value.toLowerCase();
-            if (!labTestsData || !labTestsData.tests) return;
+            if (!window.labTestsData || !window.labTestsData.tests) return;
 
             const categoryId = appState.currentCategoryId;
-            const tests = labTestsData.tests.filter(t => {
+            const tests = window.labTestsData.tests.filter(t => {
                 const matchesCategory = t.category === categoryId || t.category_id === categoryId;
                 const matchesQuery = (t.name || '').toLowerCase().includes(query);
                 return matchesCategory && matchesQuery && t.is_active !== false;
@@ -1115,14 +1137,17 @@
             const container = document.getElementById('tests-list');
             if (tests.length > 0) {
                 container.innerHTML = tests.map(test => {
-                    const inCart = cart.some(item => item.id === test.id);
+                    const inCart = window.cart.some(item => item.id === test.id);
+                    const testNameEscaped = (test.name || 'Анализ').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    const testId = test.id;
+                    const testPrice = test.price || 0;
                     return `
                         <div class="service-item" style="display: flex; justify-content: space-between; align-items: center;">
                             <div style="flex: 1;">
                                 <div class="service-name">${test.name || 'Анализ'}</div>
-                                <div class="service-price">${test.price || 0} ₽</div>
+                                <div class="service-price">${testPrice} ₽</div>
                             </div>
-                            <button class="button" onclick="toggleTestInCart(${test.id}, '${test.name}', ${test.price || 0})" style="width: auto; padding: 8px 16px; margin: 0; margin-left: 8px;">
+                            <button class="button" onclick="window.toggleTestInCart(${testId}, '${testNameEscaped}', ${testPrice})" style="width: auto; padding: 8px 16px; margin: 0; margin-left: 8px; min-width: 100px;">
                                 ${inCart ? '✓ В корзине' : 'Добавить'}
                             </button>
                         </div>
@@ -1133,55 +1158,99 @@
             }
         }
 
-        // Добавить/удалить анализ из корзины
-        function toggleTestInCart(testId, testName, testPrice) {
-            const index = cart.findIndex(item => item.id === testId);
-            if (index >= 0) {
-                cart.splice(index, 1);
-            } else {
-                cart.push({ id: testId, name: testName, price: testPrice });
+        // Добавить/удалить анализ из корзины (глобальная функция)
+        window.toggleTestInCart = function(testId, testName, testPrice) {
+            try {
+                testId = parseInt(testId);
+                testPrice = parseInt(testPrice) || 0;
+                
+                const index = window.cart.findIndex(item => item.id === testId);
+                if (index >= 0) {
+                    window.cart.splice(index, 1);
+                } else {
+                    window.cart.push({ id: testId, name: testName, price: testPrice });
+                }
+                
+                updateCartInfo();
+                
+                // Обновляем отображение тестов
+                if (appState.currentSection === 'calculator-category') {
+                    const query = document.getElementById('test-search')?.value || '';
+                    if (query) {
+                        searchTests();
+                    } else {
+                        // Перерисовываем список тестов текущей категории
+                        const categoryId = appState.currentCategoryId;
+                        const categoryName = document.getElementById('calculator-category-title').textContent;
+                        showCalculatorCategory(categoryId, categoryName);
+                    }
+                }
+            } catch (e) {
+                console.error('Error in toggleTestInCart:', e);
+                alert('Ошибка при добавлении анализа. Попробуйте еще раз.');
             }
-            updateCartInfo();
-            // Обновляем отображение тестов
-            if (appState.currentSection === 'calculator-category') {
-                searchTests();
-            }
-        }
+        };
 
         // Обновить информацию о корзине
         function updateCartInfo() {
-            const cartCount = cart.length;
-            const cartTotal = cart.reduce((sum, item) => sum + (item.price || 0), 0);
-            const samplingPrice = cart.length > 0 ? 200 : 0; // Стоимость забора крови
-            const total = cartTotal + samplingPrice;
+            try {
+                const cartCount = window.cart.length;
+                const cartTotal = window.cart.reduce((sum, item) => sum + (parseInt(item.price) || 0), 0);
+                const samplingPrice = window.cart.length > 0 ? 200 : 0; // Стоимость забора крови
+                const total = cartTotal + samplingPrice;
 
-            document.getElementById('cart-count').textContent = cartCount;
-            document.getElementById('cart-total').textContent = total;
+                // Обновляем в главной секции калькулятора
+                const cartCountEl = document.getElementById('cart-count');
+                const cartTotalEl = document.getElementById('cart-total');
+                const cartInfo = document.getElementById('cart-info');
 
-            const cartInfo = document.getElementById('cart-info');
-            if (cartCount > 0) {
-                cartInfo.style.display = 'block';
-            } else {
-                cartInfo.style.display = 'none';
+                if (cartCountEl) cartCountEl.textContent = cartCount;
+                if (cartTotalEl) cartTotalEl.textContent = total;
+
+                if (cartInfo) {
+                    if (cartCount > 0) {
+                        cartInfo.style.display = 'block';
+                    } else {
+                        cartInfo.style.display = 'none';
+                    }
+                }
+
+                // Обновляем в секции категории анализов
+                const cartCountCategoryEl = document.getElementById('cart-count-category');
+                const cartTotalCategoryEl = document.getElementById('cart-total-category');
+                const cartInfoCategory = document.getElementById('cart-info-category');
+
+                if (cartCountCategoryEl) cartCountCategoryEl.textContent = cartCount;
+                if (cartTotalCategoryEl) cartTotalCategoryEl.textContent = total;
+
+                if (cartInfoCategory) {
+                    if (cartCount > 0) {
+                        cartInfoCategory.style.display = 'block';
+                    } else {
+                        cartInfoCategory.style.display = 'none';
+                    }
+                }
+            } catch (e) {
+                console.error('Error in updateCartInfo:', e);
             }
         }
 
-        // Показать корзину
-        function showCart() {
+        // Показать корзину (глобальная функция)
+        window.showCart = function() {
             navigationHistory.push(appState.currentSection);
             appState.currentSection = 'cart';
 
             const container = document.getElementById('cart-items');
-            if (cart.length === 0) {
+            if (window.cart.length === 0) {
                 container.innerHTML = '<div class="loading">Корзина пуста</div>';
             } else {
-                container.innerHTML = cart.map((item, index) => `
+                container.innerHTML = window.cart.map((item, index) => `
                     <div class="service-item" style="display: flex; justify-content: space-between; align-items: center;">
                         <div style="flex: 1;">
-                            <div class="service-name">${item.name}</div>
-                            <div class="service-price">${item.price} ₽</div>
+                            <div class="service-name">${item.name || 'Анализ'}</div>
+                            <div class="service-price">${parseInt(item.price) || 0} ₽</div>
                         </div>
-                        <button class="button" onclick="removeFromCart(${index})" style="width: auto; padding: 8px 16px; margin: 0; margin-left: 8px; background: #ff4444;">
+                        <button class="button" onclick="window.removeFromCart(${index})" style="width: auto; padding: 8px 16px; margin: 0; margin-left: 8px; background: #ff4444; min-width: 80px;">
                             Удалить
                         </button>
                     </div>
@@ -1189,30 +1258,34 @@
             }
 
             // Обновляем итоги
-            const cartTotal = cart.reduce((sum, item) => sum + (item.price || 0), 0);
-            const samplingPrice = cart.length > 0 ? 200 : 0;
+            const cartTotal = window.cart.reduce((sum, item) => sum + (parseInt(item.price) || 0), 0);
+            const samplingPrice = window.cart.length > 0 ? 200 : 0;
             const total = cartTotal + samplingPrice;
 
-            document.getElementById('cart-tests-sum').textContent = cartTotal + ' ₽';
-            document.getElementById('cart-sampling-sum').textContent = samplingPrice + ' ₽';
-            document.getElementById('cart-total-sum').textContent = total + ' ₽';
+            const cartTestsSumEl = document.getElementById('cart-tests-sum');
+            const cartSamplingSumEl = document.getElementById('cart-sampling-sum');
+            const cartTotalSumEl = document.getElementById('cart-total-sum');
+
+            if (cartTestsSumEl) cartTestsSumEl.textContent = cartTotal + ' ₽';
+            if (cartSamplingSumEl) cartSamplingSumEl.textContent = samplingPrice + ' ₽';
+            if (cartTotalSumEl) cartTotalSumEl.textContent = total + ' ₽';
 
             showSection('cart-section');
-        }
+        };
 
-        // Удалить из корзины
-        function removeFromCart(index) {
-            cart.splice(index, 1);
+        // Удалить из корзины (глобальная функция)
+        window.removeFromCart = function(index) {
+            window.cart.splice(index, 1);
             updateCartInfo();
-            showCart();
-        }
+            window.showCart();
+        };
 
-        // Очистить корзину
-        function clearCart() {
-            cart = [];
+        // Очистить корзину (глобальная функция)
+        window.clearCart = function() {
+            window.cart = [];
             updateCartInfo();
-            showCart();
-        }
+            window.showCart();
+        };
 
         // Загрузка данных акций
         async function loadPromotionsData() {
