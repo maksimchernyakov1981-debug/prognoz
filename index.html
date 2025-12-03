@@ -307,6 +307,10 @@
                         <div class="icon">💼</div>
                         <div class="title">Услуги и цены</div>
                     </div>
+                    <div class="menu-card" onclick="showSection('calculator')">
+                        <div class="icon">🔬</div>
+                        <div class="title">Калькулятор анализов</div>
+                    </div>
                     <div class="menu-card" onclick="showSection('booking')">
                         <div class="icon">📅</div>
                         <div class="title">Запись на прием</div>
@@ -318,6 +322,10 @@
                     <div class="menu-card" onclick="showSection('doctors')">
                         <div class="icon">👨‍⚕️</div>
                         <div class="title">Врачи</div>
+                    </div>
+                    <div class="menu-card" onclick="showSection('promotions')">
+                        <div class="icon">🎁</div>
+                        <div class="title">Акции</div>
                     </div>
                     <div class="menu-card" onclick="showSection('contacts')">
                         <div class="icon">💬</div>
@@ -396,7 +404,7 @@
                                 <span class="category-icon">→</span>
                             </div>
                         </div>
-                        <div class="category-item" onclick="showPreparationDetail('procedures')">
+                        <div class="category-item" onclick="showPreparationProcedures()">
                             <div class="category-item-header">
                                 <span class="category-name">🏥 Подготовка к процедурам</span>
                                 <span class="category-icon">→</span>
@@ -405,6 +413,19 @@
                     </div>
                 </div>
                 <button class="button button-secondary" onclick="sendToBot('preparation')">Подробнее в боте</button>
+            </div>
+
+            <!-- Секция подготовки к процедурам -->
+            <div id="preparation-procedures-section" class="section hidden">
+                <div class="section-title">
+                    <button class="back-button" onclick="goBack()">←</button>
+                    <span>🏥 Подготовка к процедурам</span>
+                </div>
+                <div class="info-card">
+                    <div id="procedures-list">
+                        <div class="loading">Загрузка...</div>
+                    </div>
+                </div>
             </div>
 
             <!-- Секция детальной подготовки -->
@@ -486,6 +507,82 @@
                 </div>
                 <button class="button button-secondary" onclick="sendToBot('about')">Подробнее в боте</button>
             </div>
+
+            <!-- Секция калькулятора анализов -->
+            <div id="calculator-section" class="section hidden">
+                <div class="section-title">
+                    <button class="back-button" onclick="goBack()">←</button>
+                    <span>🔬 Калькулятор анализов</span>
+                </div>
+                <div class="info-card">
+                    <div class="category-list" id="calculator-categories">
+                        <div class="loading">Загрузка категорий...</div>
+                    </div>
+                </div>
+                <div id="cart-info" style="margin-top: 12px; padding: 12px; background: var(--tg-theme-secondary-bg-color, #f0f0f0); border-radius: 8px; display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span><strong>В корзине:</strong> <span id="cart-count">0</span> анализов</span>
+                        <span><strong>Сумма:</strong> <span id="cart-total">0</span> ₽</span>
+                    </div>
+                    <button class="button" onclick="showCart()" style="margin-top: 8px;">Просмотреть корзину</button>
+                </div>
+            </div>
+
+            <!-- Секция категории анализов -->
+            <div id="calculator-category-section" class="section hidden">
+                <div class="section-title">
+                    <button class="back-button" onclick="goBack()">←</button>
+                    <span id="calculator-category-title">Категория анализов</span>
+                </div>
+                <input type="text" class="search-box" id="test-search" placeholder="Поиск анализа..." oninput="searchTests()">
+                <div class="info-card">
+                    <div id="tests-list">
+                        <div class="loading">Загрузка анализов...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Секция корзины анализов -->
+            <div id="cart-section" class="section hidden">
+                <div class="section-title">
+                    <button class="back-button" onclick="goBack()">←</button>
+                    <span>🛒 Корзина анализов</span>
+                </div>
+                <div class="info-card">
+                    <div id="cart-items">
+                        <div class="loading">Корзина пуста</div>
+                    </div>
+                    <div id="cart-summary" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--tg-theme-hint-color, #e0e0e0);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span>Анализы:</span>
+                            <span id="cart-tests-sum">0 ₽</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span>Забор материала:</span>
+                            <span id="cart-sampling-sum">0 ₽</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 18px; padding-top: 8px; border-top: 1px solid var(--tg-theme-hint-color, #e0e0e0);">
+                            <span>Итого:</span>
+                            <span id="cart-total-sum">0 ₽</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="button" onclick="clearCart()">Очистить корзину</button>
+                <button class="button button-secondary" onclick="sendToBot('calculator')">Отправить в бот</button>
+            </div>
+
+            <!-- Секция акций -->
+            <div id="promotions-section" class="section hidden">
+                <div class="section-title">
+                    <button class="back-button" onclick="goBack()">←</button>
+                    <span>🎁 Акции</span>
+                </div>
+                <div class="info-card">
+                    <div id="promotions-list">
+                        <div class="loading">Загрузка акций...</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -514,12 +611,18 @@
             console.log('User:', user);
         }
 
+        // Корзина анализов
+        let cart = [];
+        let labTestsData = null;
+
         // Загрузка данных при инициализации
         document.addEventListener('DOMContentLoaded', function() {
             loadContactData();
             loadServicesData();
             loadDoctorsData();
             loadPreparationData();
+            loadLabTestsData();
+            loadPromotionsData();
         });
 
         // Загрузка контактных данных
@@ -774,6 +877,67 @@
             showSection('preparation-detail-section');
         }
 
+        // Показать список процедур
+        function showPreparationProcedures() {
+            navigationHistory.push(appState.currentSection);
+            appState.currentSection = 'preparation-procedures';
+
+            const procedures = appState.preparationData?.procedures;
+            const container = document.getElementById('procedures-list');
+
+            if (procedures && Object.keys(procedures).length > 0) {
+                const procedureKeys = Object.keys(procedures).filter(key => key !== 'views_count' && key !== 'last_updated');
+                container.innerHTML = procedureKeys.map(key => {
+                    const proc = procedures[key];
+                    return `
+                        <div class="category-item" onclick="showProcedureDetail('${key}')">
+                            <div class="category-item-header">
+                                <span class="category-name">${proc.title || key}</span>
+                                <span class="category-icon">→</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                container.innerHTML = '<div class="loading">Информация о процедурах доступна в основном боте</div>';
+            }
+
+            showSection('preparation-procedures-section');
+        }
+
+        // Показать детали процедуры
+        function showProcedureDetail(procedureKey) {
+            navigationHistory.push(appState.currentSection);
+            appState.currentSection = 'preparation-detail';
+
+            const proc = appState.preparationData?.procedures?.[procedureKey];
+            const container = document.getElementById('preparation-detail-content');
+            const titleElement = document.getElementById('preparation-detail-title');
+
+            titleElement.textContent = proc?.title || 'Подготовка к процедуре';
+
+            if (proc && proc.items) {
+                container.innerHTML = `
+                    <div class="preparation-item">
+                        <div class="preparation-title">${proc.title || 'Подготовка'}</div>
+                        ${proc.subtitle ? `<div style="margin-bottom: 8px; color: var(--tg-theme-hint-color, #666666);">${proc.subtitle}</div>` : ''}
+                        <ul class="preparation-list">
+                            ${proc.items.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="preparation-item">
+                        <div class="preparation-title">${proc?.title || 'Подготовка к процедуре'}</div>
+                        <p>Подробная информация о подготовке доступна в основном боте.</p>
+                    </div>
+                `;
+            }
+
+            showSection('preparation-detail-section');
+        }
+
         // Функция показа секции
         function showSection(sectionName) {
             // Скрываем все секции
@@ -830,6 +994,272 @@
         tg.BackButton.onClick(function() {
             goBack();
         });
+
+        // Загрузка данных анализов
+        async function loadLabTestsData() {
+            try {
+                const response = await fetch('/data/medical/lab_tests_categorized.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    labTestsData = data;
+                    renderCalculatorCategories(data);
+                } else {
+                    renderCalculatorCategoriesFallback();
+                }
+            } catch (e) {
+                console.error('Error loading lab tests:', e);
+                renderCalculatorCategoriesFallback();
+            }
+        }
+
+        // Отображение категорий калькулятора (fallback)
+        function renderCalculatorCategoriesFallback() {
+            const categories = [
+                { id: 'biochemical', name: '🧪 Биохимические', icon: '🧪' },
+                { id: 'clinical', name: '🩸 Общеклинические', icon: '🩸' },
+                { id: 'hormones', name: '⚗️ Гормональные', icon: '⚗️' },
+                { id: 'oncology', name: '🎯 Онкомаркеры', icon: '🎯' },
+                { id: 'infections', name: '🦠 Инфекционные', icon: '🦠' },
+                { id: 'pcr', name: '🧬 ПЦР-исследования', icon: '🧬' },
+                { id: 'stool', name: '💩 Исследование кала', icon: '💩' },
+                { id: 'vitamins', name: '💊 Витамины', icon: '💊' },
+                { id: 'coagulation', name: '🩸 Коагулология', icon: '🩸' },
+                { id: 'cytology', name: '🔬 Цитология', icon: '🔬' }
+            ];
+
+            const container = document.getElementById('calculator-categories');
+            container.innerHTML = categories.map(cat => `
+                <div class="category-item" onclick="showCalculatorCategory('${cat.id}', '${cat.name}')">
+                    <div class="category-item-header">
+                        <span class="category-name">${cat.icon} ${cat.name}</span>
+                        <span class="category-icon">→</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Отображение категорий калькулятора
+        function renderCalculatorCategories(data) {
+            if (!data || !data.categories) {
+                renderCalculatorCategoriesFallback();
+                return;
+            }
+
+            const categories = data.categories
+                .filter(cat => cat.is_active !== false)
+                .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+            const container = document.getElementById('calculator-categories');
+            container.innerHTML = categories.map(cat => `
+                <div class="category-item" onclick="showCalculatorCategory('${cat.id}', '${cat.name}')">
+                    <div class="category-item-header">
+                        <span class="category-name">${cat.icon || '🔬'} ${cat.name}</span>
+                        <span class="category-icon">→</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Показать категорию анализов
+        function showCalculatorCategory(categoryId, categoryName) {
+            navigationHistory.push(appState.currentSection);
+            appState.currentSection = 'calculator-category';
+            appState.currentCategoryId = categoryId;
+
+            document.getElementById('calculator-category-title').textContent = categoryName;
+
+            if (labTestsData && labTestsData.tests) {
+                const tests = labTestsData.tests.filter(t => 
+                    (t.category === categoryId || t.category_id === categoryId) && t.is_active !== false
+                );
+
+                const container = document.getElementById('tests-list');
+                if (tests.length > 0) {
+                    container.innerHTML = tests.map(test => {
+                        const inCart = cart.some(item => item.id === test.id);
+                        return `
+                            <div class="service-item" style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="flex: 1;">
+                                    <div class="service-name">${test.name || 'Анализ'}</div>
+                                    <div class="service-price">${test.price || 0} ₽</div>
+                                </div>
+                                <button class="button" onclick="toggleTestInCart(${test.id}, '${test.name}', ${test.price || 0})" style="width: auto; padding: 8px 16px; margin: 0; margin-left: 8px;">
+                                    ${inCart ? '✓ В корзине' : 'Добавить'}
+                                </button>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = '<div class="loading">Анализы в этой категории пока не добавлены</div>';
+                }
+            } else {
+                document.getElementById('tests-list').innerHTML = 
+                    '<div class="loading">Информация об анализах доступна в основном боте</div>';
+            }
+
+            showSection('calculator-category-section');
+        }
+
+        // Поиск анализов
+        function searchTests() {
+            const query = document.getElementById('test-search').value.toLowerCase();
+            if (!labTestsData || !labTestsData.tests) return;
+
+            const categoryId = appState.currentCategoryId;
+            const tests = labTestsData.tests.filter(t => {
+                const matchesCategory = t.category === categoryId || t.category_id === categoryId;
+                const matchesQuery = (t.name || '').toLowerCase().includes(query);
+                return matchesCategory && matchesQuery && t.is_active !== false;
+            });
+
+            const container = document.getElementById('tests-list');
+            if (tests.length > 0) {
+                container.innerHTML = tests.map(test => {
+                    const inCart = cart.some(item => item.id === test.id);
+                    return `
+                        <div class="service-item" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="flex: 1;">
+                                <div class="service-name">${test.name || 'Анализ'}</div>
+                                <div class="service-price">${test.price || 0} ₽</div>
+                            </div>
+                            <button class="button" onclick="toggleTestInCart(${test.id}, '${test.name}', ${test.price || 0})" style="width: auto; padding: 8px 16px; margin: 0; margin-left: 8px;">
+                                ${inCart ? '✓ В корзине' : 'Добавить'}
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                container.innerHTML = '<div class="loading">Анализы не найдены</div>';
+            }
+        }
+
+        // Добавить/удалить анализ из корзины
+        function toggleTestInCart(testId, testName, testPrice) {
+            const index = cart.findIndex(item => item.id === testId);
+            if (index >= 0) {
+                cart.splice(index, 1);
+            } else {
+                cart.push({ id: testId, name: testName, price: testPrice });
+            }
+            updateCartInfo();
+            // Обновляем отображение тестов
+            if (appState.currentSection === 'calculator-category') {
+                searchTests();
+            }
+        }
+
+        // Обновить информацию о корзине
+        function updateCartInfo() {
+            const cartCount = cart.length;
+            const cartTotal = cart.reduce((sum, item) => sum + (item.price || 0), 0);
+            const samplingPrice = cart.length > 0 ? 200 : 0; // Стоимость забора крови
+            const total = cartTotal + samplingPrice;
+
+            document.getElementById('cart-count').textContent = cartCount;
+            document.getElementById('cart-total').textContent = total;
+
+            const cartInfo = document.getElementById('cart-info');
+            if (cartCount > 0) {
+                cartInfo.style.display = 'block';
+            } else {
+                cartInfo.style.display = 'none';
+            }
+        }
+
+        // Показать корзину
+        function showCart() {
+            navigationHistory.push(appState.currentSection);
+            appState.currentSection = 'cart';
+
+            const container = document.getElementById('cart-items');
+            if (cart.length === 0) {
+                container.innerHTML = '<div class="loading">Корзина пуста</div>';
+            } else {
+                container.innerHTML = cart.map((item, index) => `
+                    <div class="service-item" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="flex: 1;">
+                            <div class="service-name">${item.name}</div>
+                            <div class="service-price">${item.price} ₽</div>
+                        </div>
+                        <button class="button" onclick="removeFromCart(${index})" style="width: auto; padding: 8px 16px; margin: 0; margin-left: 8px; background: #ff4444;">
+                            Удалить
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            // Обновляем итоги
+            const cartTotal = cart.reduce((sum, item) => sum + (item.price || 0), 0);
+            const samplingPrice = cart.length > 0 ? 200 : 0;
+            const total = cartTotal + samplingPrice;
+
+            document.getElementById('cart-tests-sum').textContent = cartTotal + ' ₽';
+            document.getElementById('cart-sampling-sum').textContent = samplingPrice + ' ₽';
+            document.getElementById('cart-total-sum').textContent = total + ' ₽';
+
+            showSection('cart-section');
+        }
+
+        // Удалить из корзины
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartInfo();
+            showCart();
+        }
+
+        // Очистить корзину
+        function clearCart() {
+            cart = [];
+            updateCartInfo();
+            showCart();
+        }
+
+        // Загрузка данных акций
+        async function loadPromotionsData() {
+            try {
+                const response = await fetch('/data/medical/promotions.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    renderPromotions(data.promotions || data);
+                } else {
+                    renderPromotionsFallback();
+                }
+            } catch (e) {
+                console.error('Error loading promotions:', e);
+                renderPromotionsFallback();
+            }
+        }
+
+        // Отображение акций (fallback)
+        function renderPromotionsFallback() {
+            const container = document.getElementById('promotions-list');
+            container.innerHTML = '<div class="loading">Акции загружаются...</div>';
+        }
+
+        // Отображение акций
+        function renderPromotions(promotions) {
+            const container = document.getElementById('promotions-list');
+            if (!promotions || promotions.length === 0) {
+                container.innerHTML = '<div class="loading">Актуальных акций нет</div>';
+                return;
+            }
+
+            const activePromotions = promotions.filter(p => p.is_active !== false);
+            if (activePromotions.length === 0) {
+                container.innerHTML = '<div class="loading">Актуальных акций нет</div>';
+                return;
+            }
+
+            container.innerHTML = activePromotions.map(promo => `
+                <div class="info-card" style="margin-bottom: 12px;">
+                    <div class="service-name">${promo.title || 'Акция'}</div>
+                    <div style="margin-top: 8px; color: var(--tg-theme-text-color, #000000); font-size: 14px; white-space: pre-line;">
+                        ${promo.description || ''}
+                    </div>
+                    ${promo.valid_until ? `<div style="margin-top: 8px; color: var(--tg-theme-hint-color, #666666); font-size: 12px;">Действует до: ${promo.valid_until}</div>` : ''}
+                </div>
+            `).join('');
+        }
 
         // Инициализация главного меню
         showSection('main-menu');
