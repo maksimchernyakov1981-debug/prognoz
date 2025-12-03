@@ -704,17 +704,38 @@
             try {
                 // Добавляем timestamp для обхода кэша
                 const cacheBuster = new Date().getTime();
-                const url = USE_API 
+                let url = USE_API 
                     ? `${API_BASE_URL}/api/services?t=${cacheBuster}&v=${Math.random()}`
                     : `/data/medical/services.json?t=${cacheBuster}&v=${Math.random()}`;
-                const response = await fetch(url, {
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
+                
+                let response;
+                try {
+                    response = await fetch(url, {
+                        cache: 'no-store',
+                        headers: {
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache',
+                            'Expires': '0'
+                        }
+                    });
+                } catch (fetchError) {
+                    // Если API недоступен, пробуем локальные файлы
+                    if (USE_API) {
+                        console.warn('⚠️ API недоступен, используем локальные файлы:', fetchError);
+                        url = `/data/medical/services.json?t=${cacheBuster}&v=${Math.random()}`;
+                        response = await fetch(url, {
+                            cache: 'no-store',
+                            headers: {
+                                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                                'Pragma': 'no-cache',
+                                'Expires': '0'
+                            }
+                        });
+                    } else {
+                        throw fetchError;
                     }
-                });
+                }
+                
                 if (response.ok) {
                     const data = await response.json();
                     const currentVersion = data.updated_at || data.version || null;
@@ -1612,15 +1633,10 @@
         // URL API сервера бота (можно изменить в зависимости от окружения)
         // Для локальной разработки: http://localhost:8080
         // Для продакшн: https://your-bot-server.com:8080
-        const API_BASE_URL = window.API_BASE_URL || 'http://localhost:8080';
-        const USE_API = window.USE_API !== false; // По умолчанию true, можно отключить через USE_API=false
-        
-        // URL API сервера бота (можно изменить в зависимости от окружения)
-        // Для локальной разработки: http://localhost:8080
-        // Для продакшн: https://your-bot-server.com:8080
         // Можно переопределить через: window.API_BASE_URL = 'https://your-server.com:8080';
+        // По умолчанию используем локальные файлы (USE_API = false), чтобы мини-приложение работало без API
         const API_BASE_URL = window.API_BASE_URL || 'http://localhost:8080';
-        const USE_API = window.USE_API !== false; // По умолчанию true, можно отключить через USE_API=false
+        const USE_API = window.USE_API === true; // По умолчанию false - используем локальные файлы
         
         // Храним версию данных для проверки обновлений
         window.dataVersions = {
@@ -1636,17 +1652,38 @@
                 // Добавляем timestamp для обхода кэша
                 const cacheBuster = new Date().getTime();
                 // Используем API если включено, иначе локальные файлы
-                const url = USE_API 
+                let url = USE_API 
                     ? `${API_BASE_URL}/api/promotions?t=${cacheBuster}&v=${Math.random()}`
                     : `/data/medical/promotions.json?t=${cacheBuster}&v=${Math.random()}`;
-                const response = await fetch(url, {
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
+                
+                let response;
+                try {
+                    response = await fetch(url, {
+                        cache: 'no-store',
+                        headers: {
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache',
+                            'Expires': '0'
+                        }
+                    });
+                } catch (fetchError) {
+                    // Если API недоступен, пробуем локальные файлы
+                    if (USE_API) {
+                        console.warn('⚠️ API недоступен, используем локальные файлы:', fetchError);
+                        url = `/data/medical/promotions.json?t=${cacheBuster}&v=${Math.random()}`;
+                        response = await fetch(url, {
+                            cache: 'no-store',
+                            headers: {
+                                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                                'Pragma': 'no-cache',
+                                'Expires': '0'
+                            }
+                        });
+                    } else {
+                        throw fetchError;
                     }
-                });
+                }
+                
                 if (response.ok) {
                     const data = await response.json();
                     const currentVersion = data.updated_at || data.version || Date.now().toString();
