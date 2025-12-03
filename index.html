@@ -1160,10 +1160,48 @@
 
         // Отправка команды в бот
         function sendToBot(command) {
-            tg.sendData(JSON.stringify({
+            let dataToSend = {
                 command: command,
                 source: 'webapp'
-            }));
+            };
+            
+            // Если отправляем корзину, добавляем данные корзины
+            if (command === 'calculator' && window.cart && window.cart.length > 0) {
+                // Рассчитываем итоги
+                const cartTotal = window.cart.reduce((sum, item) => sum + (parseInt(item.price) || 0), 0);
+                const hasBloodTests = window.cart.some(item => item.requiresBloodSampling !== false);
+                const hasSwabTests = window.cart.some(item => item.requiresBloodSampling === false);
+                const bloodPrice = window.labTestsData?.settings?.blood_sampling_price || 200;
+                const swabPrice = window.labTestsData?.settings?.swab_sampling_price || 300;
+                
+                let samplingPrice = 0;
+                if (hasBloodTests && hasSwabTests) {
+                    samplingPrice = bloodPrice + swabPrice;
+                } else if (hasBloodTests) {
+                    samplingPrice = bloodPrice;
+                } else if (hasSwabTests) {
+                    samplingPrice = swabPrice;
+                }
+                
+                const total = cartTotal + samplingPrice;
+                
+                dataToSend.cart = {
+                    items: window.cart.map(item => ({
+                        id: item.id,
+                        name: item.name,
+                        price: parseInt(item.price) || 0
+                    })),
+                    total: cartTotal,
+                    samplingPrice: samplingPrice,
+                    finalTotal: total,
+                    hasBloodSampling: hasBloodTests,
+                    hasSwabSampling: hasSwabTests,
+                    bloodSamplingPrice: hasBloodTests ? bloodPrice : 0,
+                    swabSamplingPrice: hasSwabTests ? swabPrice : 0
+                };
+            }
+            
+            tg.sendData(JSON.stringify(dataToSend));
             tg.close();
         }
 
