@@ -1,0 +1,145 @@
+{
+  "version": "1.1.0",
+  "updated_at": "2025-09-08T15:16:09.686761Z",
+  "updated_by": "Admin Panel",
+  "clinic": {
+    "name": "Медицинский центр «Прогноз»",
+    "short_name": "МЦ «Прогноз»",
+    "legal_name": "ООО «Прогноз»",
+    "brand": "Прогноз"
+  },
+  "contacts": {
+    "phones": {
+      "main": "+74012615747",
+      "additional": "+74012710335",
+      "emergency": null,
+      "whatsapp": "+79997976164",
+      "formatted_main": "Основной: +7-4012-615-74-7",
+      "formatted_additional": "Дополнительный: +7-4012-71-03-35",
+      "formatted_whatsapp": "WhatsApp: +7-999-797-61-64"
+    },
+    "digital": {
+      "email": "prognozlab@yandex.ru",
+      "website": "https://prognozmc.com",
+      "booking_url": "https://prognozmc.infoclinica.ru",
+      "telegram_channel": "https://t.me/s/prognozmc",
+      "social_media": {
+        "telegram": "https://t.me/s/prognozmc",
+        "whatsapp": "https://wa.me/+79997976164",
+        "vk": "https://vk.com/prognozmc",
+        "instagram": "https://instagram.com/prognozmc"
+      }
+    },
+    "address": {
+      "full": "г. Калининград, ул. Ульяны Громовой, 4 Б",
+      "city": "Калининград",
+      "street": "ул. Ульяны Громовой",
+      "building": "4Б",
+      "postal_code": null,
+      "region": "Калининградская область",
+      "country": "Россия",
+      "coordinates": {
+        "lat": 54.674212,
+        "lng": 20.500632,
+        "formatted": "54.674212, 20.500632"
+      },
+      "yandex_maps_url": "https://yandex.ru/maps/org/prognoz/1294519217?si=kegujq8f96jgvr1hzzyug751vw",
+      "yandex_navigator_url": "https://yandex.ru/navi/org/prognoz/1294519217?si=kegujq8f96jgvr1hzzyug751vw",
+      "google_maps_url": "https://maps.app.goo.gl/RQkMdVRsHmXMXfpa8?g_st=atm",
+      "two_gis_url": "https://2gis.ru/kaliningrad/geo/5630027815200326"
+    }
+  },
+  "schedule": {
+    "working_days": {
+      "monday": {
+        "is_working": true,
+        "open": "08:00",
+        "close": "21:00",
+        "formatted": "08:00-21:00"
+      },
+      "tuesday": {
+        "is_working": true,
+        "open": "08:00",
+        "close": "21:00",
+        "formatted": "08:00-21:00"
+      },
+      "wednesday": {
+        "is_working": true,
+        "open": "08:00",
+        "close": "21:00",
+        "formatted": "08:00-21:00"
+      },
+      "thursday": {
+        "is_working": true,
+        "open": "08:00",
+        "close": "21:00",
+        "formatted": "08:00-21:00"
+      },
+      "friday": {
+        "is_working": true,
+        "open": "08:00",
+        "close": "21:00",
+        "formatted": "08:00-21:00"
+      },
+      "saturday": {
+        "is_working": true,
+        "open": "09:00",
+        "close": "18:00",
+        "formatted": "09:00-16:00"
+      },
+      "sunday": {
+        "is_working": false,
+        "note": "выходной"
+      }
+    },
+    "formatted_schedule": "Пн-Пт: 08:00-21:00\nСб: 09:00-16:00\nВс: выходной",
+    "breaks": {
+      "lunch_break": null
+    },
+    "special_notes": "Возможны изменения в праздничные дни"
+  },
+  "transport": {
+    "public_transport": [
+      "Автобус: остановка «Ул. Ульяны Громовой»"
+    ],
+    "parking": {
+      "available": true,
+      "note": "Есть парковка для пациентов"
+    },
+    "navigation_tips": [
+      "Координаты для навигатора: 54.674212, 20.500632",
+      "Ориентир: ул. Ульяны Громовой, дом 4Б",
+      "Яндекс.Карты: https://yandex.ru/maps/-/CDWDi8Oi"
+    ]
+  },
+  "legal_info": {
+    "license": {
+      "number": "ЛО41-01157-39/00341634",
+      "issued_date": "19 июня 2018 года",
+      "issued_by": "Министерство здравоохранения Калининградской области",
+      "full_text": "Лицензия на осуществление медицинской деятельности №ЛО41-01157-39/00341634 от 19 июня 2018 года, выданная Министерством здравоохранения Калининградской области"
+    },
+    "data_controller": "МЦ 'Прогноз', г. Калининград, ул. Ульяны Громовой 4Б",
+    "legal_basis": "ФЗ-152 'О персональных данных'"
+  },
+  "visibility_settings": {
+    "contact_visibility": {
+      "main_phone": true,
+      "additional_phone": false,
+      "email": true,
+      "website": true,
+      "address": true,
+      "phone": true,
+      "whatsapp": true,
+      "vk": true,
+      "telegram": true,
+      "instagram": false
+    },
+    "social_media_visibility": {
+      "telegram": true,
+      "whatsapp": true,
+      "vk": true,
+      "instagram": false
+    }
+  }
+}

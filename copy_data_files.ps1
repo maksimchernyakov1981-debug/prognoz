@@ -49,6 +49,7 @@ if (Test-Path "$basePath\data\clinic\contacts.json") {
     Write-Host "✓ Скопирован contacts.json" -ForegroundColor Green
 }
 
-Write-Host "`nГотово! Все файлы скопированы." -ForegroundColor Green
+Write-Host ""
+Write-Host "Готово! Все файлы скопированы." -ForegroundColor Green
 Write-Host "Теперь загрузите папку webapp на Vercel." -ForegroundColor Yellow
 

@@ -1,0 +1,56 @@
+{
+  "analyses": {
+    "views_count": 142,
+    "last_viewed": "2025-10-20T13:16:18.840219",
+    "popular_sections": {
+      "general_rules": 0,
+      "biochemical": 0,
+      "hormonal": 0,
+      "infections": 11,
+      "urine": 11,
+      "stool": 6,
+      "special": 6,
+      "custom_1757034378": 2,
+      "uzi_abdominal": 3,
+      "uzi_pelvis": 1,
+      "uzi_pregnancy_3d": 3,
+      "uzi_breast": 3,
+      "uzi_kidneys": 5,
+      "uzi_prostate_bladder": 1,
+      "fgds": 2,
+      "enterobiasis": 3,
+      "general_recommendations": 4,
+      "truzi_prostate": 3,
+      "urine_analysis": 4,
+      "blood_analysis": 4
+    }
+  },
+  "procedures": {
+    "views_count": 134,
+    "last_viewed": "2025-10-25T23:59:18.826219",
+    "popular_sections": {
+      "uzi_abdominal": 2,
+      "uzi_pelvis": 8,
+      "uzi_breast": 5,
+      "uzi_prostate": 7,
+      "truzi_prostate": 17,
+      "uzi_pregnancy": 10,
+      "uzi_other": 4,
+      "general_recommendations": 7,
+      "uzi_pregnancy_3d": 1,
+      "uzi_kidneys": 3,
+      "fgds": 6,
+      "enterobiasis": 6,
+      "massage_therapy": 3,
+      "injections": 6,
+      "uzi_pelvis_abd": 1,
+      "physiotherapy": 2,
+      "uzi_3d_pregnancy": 1,
+      "uzi_prostate_pelvis": 1,
+      "uzi_abdomen": 2,
+      "uzi_prostate_bladder_pelvis": 2
+    }
+  },
+  "total_views": 276,
+  "last_updated": "2025-10-25T23:59:18.826219"
+}
