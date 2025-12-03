@@ -480,7 +480,7 @@
                     </div>
                 </div>
                 <button class="button" onclick="callPhone()">Позвонить</button>
-                <button class="button button-secondary" onclick="sendToBot('contacts')">Чат с администратором</button>
+                <button class="button button-secondary" onclick="sendToBot('chat_admin')">Чат с администратором</button>
             </div>
 
             <!-- Секция о клинике -->
@@ -519,6 +519,7 @@
                         <span><strong>В корзине:</strong> <span id="cart-count">0</span> анализов</span>
                         <span><strong>Сумма:</strong> <span id="cart-total">0</span> ₽</span>
                     </div>
+                    <div id="cart-sampling-text" style="font-size: 12px; color: var(--tg-theme-hint-color, #666666); margin-bottom: 8px; display: none;"></div>
                     <button class="button" onclick="window.showCart()" style="margin-top: 0;">Просмотреть корзину</button>
                 </div>
                 <div class="info-card">
@@ -539,6 +540,7 @@
                         <span><strong>В корзине:</strong> <span id="cart-count-category">0</span> анализов</span>
                         <span><strong>Сумма:</strong> <span id="cart-total-category">0</span> ₽</span>
                     </div>
+                    <div id="cart-sampling-text-category" style="font-size: 12px; color: var(--tg-theme-hint-color, #666666); margin-bottom: 8px; display: none;"></div>
                     <button class="button" onclick="window.showCart()" style="margin-top: 0;">Просмотреть корзину</button>
                 </div>
                 <input type="text" class="search-box" id="test-search" placeholder="Поиск анализа..." oninput="searchTests()">
@@ -568,6 +570,7 @@
                             <span>Забор материала:</span>
                             <span id="cart-sampling-sum">0 ₽</span>
                         </div>
+                        <div id="cart-sampling-detail" style="font-size: 12px; color: var(--tg-theme-hint-color, #666666); margin-bottom: 8px; display: none;"></div>
                         <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 18px; padding-top: 8px; border-top: 1px solid var(--tg-theme-hint-color, #e0e0e0);">
                             <span>Итого:</span>
                             <span id="cart-total-sum">0 ₽</span>
@@ -1098,13 +1101,14 @@
                         const testNameEscaped = (test.name || 'Анализ').replace(/'/g, "\\'").replace(/"/g, '&quot;');
                         const testId = test.id;
                         const testPrice = test.price || 0;
+                        const requiresBloodSampling = test.requires_blood_sampling !== false;
                         return `
                             <div class="service-item" style="display: flex; justify-content: space-between; align-items: center;">
                                 <div style="flex: 1;">
                                     <div class="service-name">${test.name || 'Анализ'}</div>
                                     <div class="service-price">${testPrice} ₽</div>
                                 </div>
-                                <button class="button" onclick="window.toggleTestInCart(${testId}, '${testNameEscaped}', ${testPrice})" style="width: auto; padding: 8px 16px; margin: 0; margin-left: 8px; min-width: 100px;">
+                                <button class="button" onclick="window.toggleTestInCart(${testId}, '${testNameEscaped}', ${testPrice}, ${requiresBloodSampling})" style="width: auto; padding: 8px 16px; margin: 0; margin-left: 8px; min-width: 100px;">
                                     ${inCart ? '✓ В корзине' : 'Добавить'}
                                 </button>
                             </div>
@@ -1159,16 +1163,22 @@
         }
 
         // Добавить/удалить анализ из корзины (глобальная функция)
-        window.toggleTestInCart = function(testId, testName, testPrice) {
+        window.toggleTestInCart = function(testId, testName, testPrice, requiresBloodSampling) {
             try {
                 testId = parseInt(testId);
                 testPrice = parseInt(testPrice) || 0;
+                requiresBloodSampling = requiresBloodSampling !== undefined ? requiresBloodSampling : true;
                 
                 const index = window.cart.findIndex(item => item.id === testId);
                 if (index >= 0) {
                     window.cart.splice(index, 1);
                 } else {
-                    window.cart.push({ id: testId, name: testName, price: testPrice });
+                    window.cart.push({ 
+                        id: testId, 
+                        name: testName, 
+                        price: testPrice,
+                        requiresBloodSampling: requiresBloodSampling
+                    });
                 }
                 
                 updateCartInfo();
@@ -1196,16 +1206,50 @@
             try {
                 const cartCount = window.cart.length;
                 const cartTotal = window.cart.reduce((sum, item) => sum + (parseInt(item.price) || 0), 0);
-                const samplingPrice = window.cart.length > 0 ? 200 : 0; // Стоимость забора крови
+                
+                // Определяем тип забора материала на основе тестов в корзине
+                let samplingPrice = 0;
+                let samplingText = '';
+                
+                if (window.cart.length > 0) {
+                    const hasBloodTests = window.cart.some(item => item.requiresBloodSampling !== false);
+                    const hasSwabTests = window.cart.some(item => item.requiresBloodSampling === false);
+                    
+                    // Получаем цены из настроек
+                    const bloodPrice = window.labTestsData?.settings?.blood_sampling_price || 200;
+                    const swabPrice = window.labTestsData?.settings?.swab_sampling_price || 300;
+                    
+                    if (hasBloodTests && hasSwabTests) {
+                        // Если есть оба типа анализов, учитываем оба забора
+                        samplingPrice = bloodPrice + swabPrice;
+                        samplingText = `Забор крови (${bloodPrice}₽) + Забор мазка (${swabPrice}₽)`;
+                    } else if (hasBloodTests) {
+                        // Только забор крови
+                        samplingPrice = bloodPrice;
+                        samplingText = `Забор крови (${bloodPrice}₽)`;
+                    } else if (hasSwabTests) {
+                        // Только забор мазка
+                        samplingPrice = swabPrice;
+                        samplingText = `Забор мазка (${swabPrice}₽)`;
+                    }
+                }
+                
                 const total = cartTotal + samplingPrice;
 
                 // Обновляем в главной секции калькулятора
                 const cartCountEl = document.getElementById('cart-count');
                 const cartTotalEl = document.getElementById('cart-total');
                 const cartInfo = document.getElementById('cart-info');
+                const cartSamplingEl = document.getElementById('cart-sampling-text');
 
                 if (cartCountEl) cartCountEl.textContent = cartCount;
                 if (cartTotalEl) cartTotalEl.textContent = total;
+                if (cartSamplingEl && samplingText) {
+                    cartSamplingEl.textContent = samplingText;
+                    cartSamplingEl.style.display = 'block';
+                } else if (cartSamplingEl) {
+                    cartSamplingEl.style.display = 'none';
+                }
 
                 if (cartInfo) {
                     if (cartCount > 0) {
@@ -1219,9 +1263,16 @@
                 const cartCountCategoryEl = document.getElementById('cart-count-category');
                 const cartTotalCategoryEl = document.getElementById('cart-total-category');
                 const cartInfoCategory = document.getElementById('cart-info-category');
+                const cartSamplingCategoryEl = document.getElementById('cart-sampling-text-category');
 
                 if (cartCountCategoryEl) cartCountCategoryEl.textContent = cartCount;
                 if (cartTotalCategoryEl) cartTotalCategoryEl.textContent = total;
+                if (cartSamplingCategoryEl && samplingText) {
+                    cartSamplingCategoryEl.textContent = samplingText;
+                    cartSamplingCategoryEl.style.display = 'block';
+                } else if (cartSamplingCategoryEl) {
+                    cartSamplingCategoryEl.style.display = 'none';
+                }
 
                 if (cartInfoCategory) {
                     if (cartCount > 0) {
@@ -1257,18 +1308,59 @@
                 `).join('');
             }
 
-            // Обновляем итоги
+            // Обновляем итоги с учетом типа забора материала
             const cartTotal = window.cart.reduce((sum, item) => sum + (parseInt(item.price) || 0), 0);
-            const samplingPrice = window.cart.length > 0 ? 200 : 0;
+            
+            let samplingPrice = 0;
+            if (window.cart.length > 0) {
+                const hasBloodTests = window.cart.some(item => item.requiresBloodSampling !== false);
+                const hasSwabTests = window.cart.some(item => item.requiresBloodSampling === false);
+                
+                const bloodPrice = window.labTestsData?.settings?.blood_sampling_price || 200;
+                const swabPrice = window.labTestsData?.settings?.swab_sampling_price || 300;
+                
+                if (hasBloodTests && hasSwabTests) {
+                    samplingPrice = bloodPrice + swabPrice;
+                } else if (hasBloodTests) {
+                    samplingPrice = bloodPrice;
+                } else if (hasSwabTests) {
+                    samplingPrice = swabPrice;
+                }
+            }
+            
             const total = cartTotal + samplingPrice;
 
             const cartTestsSumEl = document.getElementById('cart-tests-sum');
             const cartSamplingSumEl = document.getElementById('cart-sampling-sum');
             const cartTotalSumEl = document.getElementById('cart-total-sum');
+            const cartSamplingDetailEl = document.getElementById('cart-sampling-detail');
 
             if (cartTestsSumEl) cartTestsSumEl.textContent = cartTotal + ' ₽';
             if (cartSamplingSumEl) cartSamplingSumEl.textContent = samplingPrice + ' ₽';
             if (cartTotalSumEl) cartTotalSumEl.textContent = total + ' ₽';
+            
+            // Показываем детали забора материала
+            if (cartSamplingDetailEl && window.cart.length > 0) {
+                const hasBloodTests = window.cart.some(item => item.requiresBloodSampling !== false);
+                const hasSwabTests = window.cart.some(item => item.requiresBloodSampling === false);
+                const bloodPrice = window.labTestsData?.settings?.blood_sampling_price || 200;
+                const swabPrice = window.labTestsData?.settings?.swab_sampling_price || 300;
+                
+                if (hasBloodTests && hasSwabTests) {
+                    cartSamplingDetailEl.innerHTML = `Забор крови: ${bloodPrice}₽<br>Забор мазка: ${swabPrice}₽`;
+                    cartSamplingDetailEl.style.display = 'block';
+                } else if (hasBloodTests) {
+                    cartSamplingDetailEl.innerHTML = `Забор крови: ${bloodPrice}₽`;
+                    cartSamplingDetailEl.style.display = 'block';
+                } else if (hasSwabTests) {
+                    cartSamplingDetailEl.innerHTML = `Забор мазка: ${swabPrice}₽`;
+                    cartSamplingDetailEl.style.display = 'block';
+                } else {
+                    cartSamplingDetailEl.style.display = 'none';
+                }
+            } else if (cartSamplingDetailEl) {
+                cartSamplingDetailEl.style.display = 'none';
+            }
 
             showSection('cart-section');
         };
