@@ -632,15 +632,15 @@
         const cart = window.cart;
         const labTestsData = window.labTestsData;
 
-        // Функция обновления всех данных
-        async function refreshAllData() {
-            console.log('Обновление данных...');
+        // Функция обновления всех данных (принудительное)
+        async function refreshAllData(forceRefresh = true) {
+            console.log('Обновление данных...', forceRefresh ? '(принудительное)' : '');
             await Promise.all([
-                loadServicesData(),
+                loadServicesData(forceRefresh),
                 loadDoctorsData(),
                 loadPreparationData(),
-                loadLabTestsData(),
-                loadPromotionsData()
+                loadLabTestsData(forceRefresh),
+                loadPromotionsData(forceRefresh)
             ]);
             console.log('Данные обновлены');
         }
@@ -656,8 +656,27 @@
             // Инициализируем корзину
             updateCartInfo();
             
-            // Обновляем данные при возврате в мини-приложение (каждые 5 минут)
-            setInterval(refreshAllData, 5 * 60 * 1000);
+            // Обновляем данные при возврате в мини-приложение (каждые 2 минуты)
+            setInterval(() => refreshAllData(false), 2 * 60 * 1000);
+            
+            // Принудительное обновление при фокусе на окне
+            let lastFocusTime = Date.now();
+            window.addEventListener('focus', function() {
+                const now = Date.now();
+                // Обновляем только если прошло больше 30 секунд с последнего обновления
+                if (now - lastFocusTime > 30000) {
+                    refreshAllData(true);
+                    lastFocusTime = now;
+                }
+            });
+            
+            // Принудительное обновление при видимости страницы
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    // Страница стала видимой - обновляем данные
+                    setTimeout(() => refreshAllData(true), 500);
+                }
+            });
         });
 
         // Загрузка контактных данных
@@ -680,17 +699,29 @@
         }
 
         // Загрузка данных услуг
-        async function loadServicesData() {
+        async function loadServicesData(forceRefresh = false) {
             try {
                 // Добавляем timestamp для обхода кэша
                 const cacheBuster = new Date().getTime();
-                const response = await fetch(`/data/medical/services.json?t=${cacheBuster}`, {
-                    cache: 'no-store'
+                const response = await fetch(`/data/medical/services.json?t=${cacheBuster}&v=${Math.random()}`, {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    appState.servicesData = data;
-                    renderServicesCategories(data);
+                    const currentVersion = data.updated_at || data.version || null;
+                    
+                    // Проверяем, изменилась ли версия
+                    if (forceRefresh || window.dataVersions.services !== currentVersion) {
+                        window.dataVersions.services = currentVersion;
+                        appState.servicesData = data;
+                        renderServicesCategories(data);
+                        console.log('Услуги обновлены, версия:', currentVersion);
+                    }
                 } else {
                     // Fallback данные
                     renderServicesCategoriesFallback();
@@ -1100,8 +1131,8 @@
             // Обновляем данные при возврате в главное меню
             if (sectionName === 'main-menu') {
                 tg.BackButton.hide();
-                // Обновляем данные при возврате в главное меню
-                setTimeout(refreshAllData, 500);
+                // Принудительно обновляем данные при возврате в главное меню
+                setTimeout(() => refreshAllData(true), 500);
             } else {
                 tg.BackButton.show();
             }
@@ -1141,18 +1172,30 @@
             goBack();
         });
 
-        // Загрузка данных анализов с кэшированием
-        async function loadLabTestsData() {
+        // Загрузка данных анализов с проверкой версии
+        async function loadLabTestsData(forceRefresh = false) {
             try {
                 // Добавляем timestamp для обхода кэша
                 const cacheBuster = new Date().getTime();
-                const response = await fetch(`/data/medical/lab_tests_categorized.json?t=${cacheBuster}`, {
-                    cache: 'no-store'
+                const response = await fetch(`/data/medical/lab_tests_categorized.json?t=${cacheBuster}&v=${Math.random()}`, {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    window.labTestsData = data;
-                    renderCalculatorCategories(data);
+                    const currentVersion = data.updated_at || data.version || null;
+                    
+                    // Проверяем, изменилась ли версия
+                    if (forceRefresh || window.dataVersions.labTests !== currentVersion) {
+                        window.dataVersions.labTests = currentVersion;
+                        window.labTestsData = data;
+                        renderCalculatorCategories(data);
+                        console.log('Анализы обновлены, версия:', currentVersion);
+                    }
                 } else {
                     renderCalculatorCategoriesFallback();
                 }
@@ -1508,17 +1551,37 @@
             window.showCart();
         };
 
-        // Загрузка данных акций с кэшированием
-        async function loadPromotionsData() {
+        // Храним версию данных для проверки обновлений
+        window.dataVersions = {
+            promotions: null,
+            services: null,
+            doctors: null,
+            labTests: null
+        };
+
+        // Загрузка данных акций с проверкой версии
+        async function loadPromotionsData(forceRefresh = false) {
             try {
                 // Добавляем timestamp для обхода кэша
                 const cacheBuster = new Date().getTime();
-                const response = await fetch(`/data/medical/promotions.json?t=${cacheBuster}`, {
-                    cache: 'no-store'
+                const response = await fetch(`/data/medical/promotions.json?t=${cacheBuster}&v=${Math.random()}`, {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    renderPromotions(data.promotions || data);
+                    const currentVersion = data.updated_at || data.version || null;
+                    
+                    // Проверяем, изменилась ли версия
+                    if (forceRefresh || window.dataVersions.promotions !== currentVersion) {
+                        window.dataVersions.promotions = currentVersion;
+                        renderPromotions(data.promotions || data);
+                        console.log('Акции обновлены, версия:', currentVersion);
+                    }
                 } else {
                     renderPromotionsFallback();
                 }
