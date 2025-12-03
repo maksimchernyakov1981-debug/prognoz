@@ -25,6 +25,7 @@
             max-width: 100%;
             margin: 0 auto;
             padding: 16px;
+            padding-bottom: 80px;
         }
 
         .header {
@@ -87,6 +88,18 @@
             font-weight: 600;
             margin-bottom: 12px;
             color: var(--tg-theme-text-color, #000000);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px 8px;
+            color: var(--tg-theme-text-color, #000000);
         }
 
         .info-card {
@@ -136,6 +149,11 @@
             opacity: 0.8;
         }
 
+        .button-secondary {
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            color: var(--tg-theme-text-color, #000000);
+        }
+
         .hidden {
             display: none;
         }
@@ -146,13 +164,131 @@
             color: var(--tg-theme-hint-color, #666666);
         }
 
-        .contact-link {
-            color: var(--tg-theme-link-color, #3390ec);
-            text-decoration: none;
+        .category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .contact-link:active {
-            opacity: 0.7;
+        .category-item {
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
+        }
+
+        .category-item:active {
+            transform: scale(0.98);
+        }
+
+        .category-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-name {
+            font-weight: 600;
+            color: var(--tg-theme-text-color, #000000);
+        }
+
+        .category-icon {
+            font-size: 20px;
+        }
+
+        .service-item {
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
+        }
+
+        .service-name {
+            font-weight: 600;
+            color: var(--tg-theme-text-color, #000000);
+            margin-bottom: 4px;
+        }
+
+        .service-price {
+            color: var(--tg-theme-hint-color, #666666);
+            font-size: 14px;
+        }
+
+        .doctor-item {
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
+        }
+
+        .doctor-name {
+            font-weight: 600;
+            color: var(--tg-theme-text-color, #000000);
+            margin-bottom: 4px;
+        }
+
+        .doctor-specialty {
+            color: var(--tg-theme-hint-color, #666666);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .doctor-experience {
+            color: var(--tg-theme-hint-color, #666666);
+            font-size: 12px;
+        }
+
+        .preparation-item {
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+
+        .preparation-title {
+            font-weight: 600;
+            color: var(--tg-theme-text-color, #000000);
+            margin-bottom: 8px;
+        }
+
+        .preparation-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .preparation-list li {
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+            color: var(--tg-theme-text-color, #000000);
+            font-size: 14px;
+        }
+
+        .preparation-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--tg-theme-hint-color, #666666);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            color: var(--tg-theme-text-color, #000000);
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--tg-theme-button-color, #3390ec);
         }
     </style>
 </head>
@@ -164,68 +300,68 @@
         </div>
 
         <div id="main-content">
-            <div class="menu-grid">
-                <div class="menu-card" onclick="showSection('services')">
-                    <div class="icon">💼</div>
-                    <div class="title">Услуги и цены</div>
-                </div>
-                <div class="menu-card" onclick="showSection('booking')">
-                    <div class="icon">📅</div>
-                    <div class="title">Запись на прием</div>
-                </div>
-                <div class="menu-card" onclick="showSection('preparation')">
-                    <div class="icon">📋</div>
-                    <div class="title">Подготовка</div>
-                </div>
-                <div class="menu-card" onclick="showSection('contacts')">
-                    <div class="icon">💬</div>
-                    <div class="title">Контакты</div>
-                </div>
-                <div class="menu-card" onclick="showSection('about')">
-                    <div class="icon">ℹ️</div>
-                    <div class="title">О клинике</div>
-                </div>
-                <div class="menu-card" onclick="showSection('settings')">
-                    <div class="icon">⚙️</div>
-                    <div class="title">Настройки</div>
+            <!-- Главное меню -->
+            <div id="main-menu" class="section">
+                <div class="menu-grid">
+                    <div class="menu-card" onclick="showSection('services')">
+                        <div class="icon">💼</div>
+                        <div class="title">Услуги и цены</div>
+                    </div>
+                    <div class="menu-card" onclick="showSection('booking')">
+                        <div class="icon">📅</div>
+                        <div class="title">Запись на прием</div>
+                    </div>
+                    <div class="menu-card" onclick="showSection('preparation')">
+                        <div class="icon">📋</div>
+                        <div class="title">Подготовка</div>
+                    </div>
+                    <div class="menu-card" onclick="showSection('doctors')">
+                        <div class="icon">👨‍⚕️</div>
+                        <div class="title">Врачи</div>
+                    </div>
+                    <div class="menu-card" onclick="showSection('contacts')">
+                        <div class="icon">💬</div>
+                        <div class="title">Контакты</div>
+                    </div>
+                    <div class="menu-card" onclick="showSection('about')">
+                        <div class="icon">ℹ️</div>
+                        <div class="title">О клинике</div>
+                    </div>
                 </div>
             </div>
 
             <!-- Секция услуг -->
             <div id="services-section" class="section hidden">
-                <div class="section-title">💼 Услуги и цены</div>
+                <div class="section-title">
+                    <button class="back-button" onclick="goBack()">←</button>
+                    <span>💼 Услуги и цены</span>
+                </div>
                 <div class="info-card">
-                    <div class="info-row">
-                        <span class="info-label">Терапия</span>
-                        <span class="info-value">✓</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Кардиология</span>
-                        <span class="info-value">✓</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Неврология</span>
-                        <span class="info-value">✓</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Эндокринология</span>
-                        <span class="info-value">✓</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Гинекология</span>
-                        <span class="info-value">✓</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Урология</span>
-                        <span class="info-value">✓</span>
+                    <div class="category-list" id="services-categories">
+                        <div class="loading">Загрузка категорий...</div>
                     </div>
                 </div>
-                <button class="button" onclick="sendToBot('services')">Подробнее в боте</button>
+            </div>
+
+            <!-- Секция категории услуг -->
+            <div id="service-category-section" class="section hidden">
+                <div class="section-title">
+                    <button class="back-button" onclick="goBack()">←</button>
+                    <span id="category-title">Категория</span>
+                </div>
+                <div class="info-card">
+                    <div id="services-list">
+                        <div class="loading">Загрузка услуг...</div>
+                    </div>
+                </div>
             </div>
 
             <!-- Секция записи -->
             <div id="booking-section" class="section hidden">
-                <div class="section-title">📅 Запись на прием</div>
+                <div class="section-title">
+                    <button class="back-button" onclick="goBack()">←</button>
+                    <span>📅 Запись на прием</span>
+                </div>
                 <div class="info-card">
                     <div class="info-row">
                         <span class="info-label">Телефон</span>
@@ -237,21 +373,73 @@
                     </div>
                 </div>
                 <button class="button" onclick="callPhone()">Позвонить</button>
-                <button class="button" onclick="sendToBot('booking')">Записаться в боте</button>
+                <button class="button button-secondary" onclick="sendToBot('booking')">Записаться в боте</button>
             </div>
 
             <!-- Секция подготовки -->
             <div id="preparation-section" class="section hidden">
-                <div class="section-title">📋 Подготовка к анализам</div>
-                <div class="info-card">
-                    <p>Информация о подготовке к различным анализам и процедурам доступна в основном боте.</p>
+                <div class="section-title">
+                    <button class="back-button" onclick="goBack()">←</button>
+                    <span>📋 Подготовка к анализам</span>
                 </div>
-                <button class="button" onclick="sendToBot('preparation')">Открыть в боте</button>
+                <div class="info-card">
+                    <div class="category-list">
+                        <div class="category-item" onclick="showPreparationDetail('blood')">
+                            <div class="category-item-header">
+                                <span class="category-name">🩸 Анализ крови</span>
+                                <span class="category-icon">→</span>
+                            </div>
+                        </div>
+                        <div class="category-item" onclick="showPreparationDetail('urine')">
+                            <div class="category-item-header">
+                                <span class="category-name">🧪 Анализ мочи</span>
+                                <span class="category-icon">→</span>
+                            </div>
+                        </div>
+                        <div class="category-item" onclick="showPreparationDetail('procedures')">
+                            <div class="category-item-header">
+                                <span class="category-name">🏥 Подготовка к процедурам</span>
+                                <span class="category-icon">→</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="button button-secondary" onclick="sendToBot('preparation')">Подробнее в боте</button>
+            </div>
+
+            <!-- Секция детальной подготовки -->
+            <div id="preparation-detail-section" class="section hidden">
+                <div class="section-title">
+                    <button class="back-button" onclick="goBack()">←</button>
+                    <span id="preparation-detail-title">Подготовка</span>
+                </div>
+                <div class="info-card">
+                    <div id="preparation-detail-content">
+                        <div class="loading">Загрузка...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Секция врачей -->
+            <div id="doctors-section" class="section hidden">
+                <div class="section-title">
+                    <button class="back-button" onclick="goBack()">←</button>
+                    <span>👨‍⚕️ Врачи</span>
+                </div>
+                <input type="text" class="search-box" id="doctor-search" placeholder="Поиск врача..." oninput="searchDoctors()">
+                <div class="info-card">
+                    <div id="doctors-list">
+                        <div class="loading">Загрузка врачей...</div>
+                    </div>
+                </div>
             </div>
 
             <!-- Секция контактов -->
             <div id="contacts-section" class="section hidden">
-                <div class="section-title">💬 Контакты</div>
+                <div class="section-title">
+                    <button class="back-button" onclick="goBack()">←</button>
+                    <span>💬 Контакты</span>
+                </div>
                 <div class="info-card">
                     <div class="info-row">
                         <span class="info-label">Телефон</span>
@@ -259,7 +447,7 @@
                     </div>
                     <div class="info-row">
                         <span class="info-label">Адрес</span>
-                        <span class="info-value">Калининград, ул. Ульяны Громовой, 4Б</span>
+                        <span class="info-value" id="contact-address">Калининград, ул. Ульяны Громовой, 4Б</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Email</span>
@@ -271,26 +459,32 @@
                     </div>
                 </div>
                 <button class="button" onclick="callPhone()">Позвонить</button>
-                <button class="button" onclick="sendToBot('contacts')">Чат с администратором</button>
+                <button class="button button-secondary" onclick="sendToBot('contacts')">Чат с администратором</button>
             </div>
 
             <!-- Секция о клинике -->
             <div id="about-section" class="section hidden">
-                <div class="section-title">ℹ️ О клинике</div>
+                <div class="section-title">
+                    <button class="back-button" onclick="goBack()">←</button>
+                    <span>ℹ️ О клинике</span>
+                </div>
                 <div class="info-card">
                     <p><strong>Медицинский центр «Прогноз»</strong></p>
                     <p style="margin-top: 12px;">Мы предоставляем полный спектр медицинских услуг с использованием современного оборудования и высококвалифицированных специалистов.</p>
+                    <div style="margin-top: 16px;">
+                        <p><strong>Наши направления:</strong></p>
+                        <ul style="margin-top: 8px; padding-left: 20px;">
+                            <li>Терапия</li>
+                            <li>Кардиология</li>
+                            <li>Неврология</li>
+                            <li>Эндокринология</li>
+                            <li>Гинекология</li>
+                            <li>Урология</li>
+                            <li>И многие другие</li>
+                        </ul>
+                    </div>
                 </div>
-                <button class="button" onclick="sendToBot('about')">Подробнее в боте</button>
-            </div>
-
-            <!-- Секция настроек -->
-            <div id="settings-section" class="section hidden">
-                <div class="section-title">⚙️ Настройки</div>
-                <div class="info-card">
-                    <p>Настройки приложения</p>
-                </div>
-                <button class="button" onclick="sendToBot('settings')">Открыть настройки в боте</button>
+                <button class="button button-secondary" onclick="sendToBot('about')">Подробнее в боте</button>
             </div>
         </div>
     </div>
@@ -301,93 +495,344 @@
         tg.ready();
         tg.expand();
 
+        // Состояние приложения
+        let appState = {
+            currentSection: 'main-menu',
+            previousSection: null,
+            servicesData: null,
+            doctorsData: null,
+            contactsData: null,
+            preparationData: null
+        };
+
+        // История навигации
+        let navigationHistory = [];
+
         // Получаем данные пользователя
         const user = tg.initDataUnsafe?.user;
         if (user) {
             console.log('User:', user);
         }
 
+        // Загрузка данных при инициализации
+        document.addEventListener('DOMContentLoaded', function() {
+            loadContactData();
+            loadServicesData();
+            loadDoctorsData();
+            loadPreparationData();
+        });
+
+        // Загрузка контактных данных
+        async function loadContactData() {
+            try {
+                const phone = '+7-401-261-57-47';
+                const schedule = 'Пн-Пт: 08:00-21:00\nСб: 09:00-18:00\nВс: выходной';
+                const address = 'Калининград, ул. Ульяны Громовой, 4Б';
+
+                document.getElementById('phone-value').textContent = phone;
+                document.getElementById('schedule-value').textContent = schedule;
+                document.getElementById('contact-phone').textContent = phone;
+                document.getElementById('contact-schedule').textContent = schedule;
+                document.getElementById('contact-address').textContent = address;
+
+                appState.contactsData = { phone, schedule, address };
+            } catch (e) {
+                console.error('Error loading contacts:', e);
+            }
+        }
+
+        // Загрузка данных услуг
+        async function loadServicesData() {
+            try {
+                // Пытаемся загрузить с сервера, если доступно
+                const response = await fetch('/data/medical/services.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    appState.servicesData = data;
+                    renderServicesCategories(data);
+                } else {
+                    // Fallback данные
+                    renderServicesCategoriesFallback();
+                }
+            } catch (e) {
+                console.error('Error loading services:', e);
+                renderServicesCategoriesFallback();
+            }
+        }
+
+        // Отображение категорий услуг (fallback)
+        function renderServicesCategoriesFallback() {
+            const categories = [
+                { id: 'therapy', name: 'Терапия', icon: '🩺' },
+                { id: 'cardiology', name: 'Кардиология', icon: '💓' },
+                { id: 'neurology', name: 'Неврология', icon: '🧠' },
+                { id: 'endocrinology', name: 'Эндокринология', icon: '⚗️' },
+                { id: 'gynecology', name: 'Гинекология', icon: '🤱' },
+                { id: 'urology', name: 'Урология', icon: '💧' },
+                { id: 'dermatology', name: 'Дерматология', icon: '🩸' },
+                { id: 'lor', name: 'ЛОР', icon: '👂' },
+                { id: 'ophthalmology', name: 'Офтальмология', icon: '👁️' },
+                { id: 'orthopedics', name: 'Ортопедия', icon: '🦴' }
+            ];
+
+            const container = document.getElementById('services-categories');
+            container.innerHTML = categories.map(cat => `
+                <div class="category-item" onclick="showServiceCategory('${cat.id}', '${cat.name}')">
+                    <div class="category-item-header">
+                        <span class="category-name">${cat.icon} ${cat.name}</span>
+                        <span class="category-icon">→</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Отображение категорий услуг
+        function renderServicesCategories(data) {
+            if (!data || !data.categories) {
+                renderServicesCategoriesFallback();
+                return;
+            }
+
+            const categories = data.categories
+                .filter(cat => cat.is_active !== false)
+                .sort((a, b) => (a.order || 0) - (b.order || 0))
+                .slice(0, 20); // Ограничиваем до 20 категорий
+
+            const container = document.getElementById('services-categories');
+            container.innerHTML = categories.map(cat => `
+                <div class="category-item" onclick="showServiceCategory('${cat.id}', '${cat.name}')">
+                    <div class="category-item-header">
+                        <span class="category-name">${cat.icon || '🏥'} ${cat.name}</span>
+                        <span class="category-icon">→</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Показать категорию услуг
+        function showServiceCategory(categoryId, categoryName) {
+            navigationHistory.push(appState.currentSection);
+            appState.currentSection = 'service-category';
+            appState.currentCategoryId = categoryId;
+
+            document.getElementById('category-title').textContent = categoryName;
+
+            // Показываем услуги категории
+            if (appState.servicesData && appState.servicesData.services) {
+                const services = appState.servicesData.services.filter(s => 
+                    s.category_id === categoryId || s.category === categoryId
+                );
+
+                const container = document.getElementById('services-list');
+                if (services.length > 0) {
+                    container.innerHTML = services.map(service => `
+                        <div class="service-item">
+                            <div class="service-name">${service.name || 'Услуга'}</div>
+                            ${service.price ? `<div class="service-price">${service.price}</div>` : ''}
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="loading">Услуги в этой категории пока не добавлены</div>';
+                }
+            } else {
+                document.getElementById('services-list').innerHTML = 
+                    '<div class="loading">Информация об услугах доступна в основном боте</div>';
+            }
+
+            showSection('service-category-section');
+        }
+
+        // Загрузка данных врачей
+        async function loadDoctorsData() {
+            try {
+                const response = await fetch('/data/medical/doctors.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    appState.doctorsData = data.doctors || data;
+                    renderDoctors(appState.doctorsData);
+                } else {
+                    renderDoctorsFallback();
+                }
+            } catch (e) {
+                console.error('Error loading doctors:', e);
+                renderDoctorsFallback();
+            }
+        }
+
+        // Отображение врачей (fallback)
+        function renderDoctorsFallback() {
+            const doctors = [
+                { name: 'Иваньков Игорь Георгиевич', specialties: ['Эндокринолог', 'Терапевт'], experience: '35 лет' },
+                { name: 'Виноградова Лидия Алексеевна', specialties: ['Терапевт', 'Гастроэнтеролог'], experience: '31 год' },
+                { name: 'Островская Софья Дмитриевна', specialties: ['Терапевт', 'Дерматовенеролог'] }
+            ];
+            appState.doctorsData = doctors;
+            renderDoctors(doctors);
+        }
+
+        // Отображение врачей
+        function renderDoctors(doctors) {
+            const container = document.getElementById('doctors-list');
+            if (!doctors || doctors.length === 0) {
+                container.innerHTML = '<div class="loading">Список врачей загружается...</div>';
+                return;
+            }
+
+            container.innerHTML = doctors.map(doctor => {
+                const specialties = Array.isArray(doctor.specialties) 
+                    ? doctor.specialties.join(', ') 
+                    : (doctor.specialties || 'Врач');
+                return `
+                    <div class="doctor-item">
+                        <div class="doctor-name">${doctor.name || 'Врач'}</div>
+                        <div class="doctor-specialty">${specialties}</div>
+                        ${doctor.experience ? `<div class="doctor-experience">Опыт: ${doctor.experience}</div>` : ''}
+                        ${doctor.notes ? `<div class="doctor-experience">${doctor.notes}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Поиск врачей
+        function searchDoctors() {
+            const query = document.getElementById('doctor-search').value.toLowerCase();
+            if (!appState.doctorsData) return;
+
+            const filtered = appState.doctorsData.filter(doctor => {
+                const name = (doctor.name || '').toLowerCase();
+                const specialties = Array.isArray(doctor.specialties) 
+                    ? doctor.specialties.join(' ').toLowerCase()
+                    : (doctor.specialties || '').toLowerCase();
+                return name.includes(query) || specialties.includes(query);
+            });
+
+            renderDoctors(filtered);
+        }
+
+        // Загрузка данных подготовки
+        async function loadPreparationData() {
+            try {
+                const [bloodResponse, urineResponse, proceduresResponse] = await Promise.all([
+                    fetch('/data/preparation/analyses_preparation.json').catch(() => null),
+                    fetch('/data/preparation/analyses_preparation.json').catch(() => null),
+                    fetch('/data/preparation/procedures_preparation.json').catch(() => null)
+                ]);
+
+                appState.preparationData = {
+                    blood: bloodResponse && bloodResponse.ok ? await bloodResponse.json() : null,
+                    urine: urineResponse && urineResponse.ok ? await urineResponse.json() : null,
+                    procedures: proceduresResponse && proceduresResponse.ok ? await proceduresResponse.json() : null
+                };
+            } catch (e) {
+                console.error('Error loading preparation data:', e);
+            }
+        }
+
+        // Показать детали подготовки
+        function showPreparationDetail(type) {
+            navigationHistory.push(appState.currentSection);
+            appState.currentSection = 'preparation-detail';
+            appState.currentPreparationType = type;
+
+            const container = document.getElementById('preparation-detail-content');
+            const titleElement = document.getElementById('preparation-detail-title');
+
+            let data = null;
+            let title = '';
+
+            if (type === 'blood') {
+                title = '🩸 Анализ крови';
+                data = appState.preparationData?.blood?.blood_analysis;
+            } else if (type === 'urine') {
+                title = '🧪 Анализ мочи';
+                data = appState.preparationData?.blood?.urine_analysis;
+            } else if (type === 'procedures') {
+                title = '🏥 Подготовка к процедурам';
+                data = appState.preparationData?.procedures;
+            }
+
+            titleElement.textContent = title;
+
+            if (data && data.items) {
+                container.innerHTML = `
+                    <div class="preparation-item">
+                        <div class="preparation-title">${data.title || title}</div>
+                        <ul class="preparation-list">
+                            ${data.items.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="preparation-item">
+                        <div class="preparation-title">${title}</div>
+                        <p>Подробная информация о подготовке доступна в основном боте.</p>
+                    </div>
+                `;
+            }
+
+            showSection('preparation-detail-section');
+        }
+
         // Функция показа секции
         function showSection(sectionName) {
             // Скрываем все секции
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(section => {
+            document.querySelectorAll('.section').forEach(section => {
                 section.classList.add('hidden');
             });
 
             // Показываем выбранную секцию
-            const targetSection = document.getElementById(sectionName + '-section');
+            const targetSection = document.getElementById(sectionName + '-section') || 
+                                document.getElementById(sectionName);
             if (targetSection) {
                 targetSection.classList.remove('hidden');
-                
-                // Загружаем данные если нужно
-                if (sectionName === 'booking' || sectionName === 'contacts') {
-                    loadContactData();
-                }
+                appState.currentSection = sectionName;
             }
 
-            // Прокручиваем к секции
-            targetSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Показываем/скрываем кнопку "Назад"
+            if (sectionName === 'main-menu') {
+                tg.BackButton.hide();
+            } else {
+                tg.BackButton.show();
+            }
+
+            // Прокручиваем к началу
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Загрузка контактных данных
-        function loadContactData() {
-            // В реальном приложении здесь был бы запрос к API
-            // Пока используем заглушки
-            const phone = '+7-401-261-57-47';
-            const schedule = 'Пн-Пт: 08:00-21:00\nСб: 09:00-18:00\nВс: выходной';
-
-            document.getElementById('phone-value').textContent = phone;
-            document.getElementById('schedule-value').textContent = schedule;
-            document.getElementById('contact-phone').textContent = phone;
-            document.getElementById('contact-schedule').textContent = schedule;
+        // Навигация назад
+        function goBack() {
+            if (navigationHistory.length > 0) {
+                const previousSection = navigationHistory.pop();
+                showSection(previousSection);
+            } else {
+                showSection('main-menu');
+            }
         }
 
         // Звонок по телефону
         function callPhone() {
-            const phone = document.getElementById('phone-value')?.textContent || 
-                         document.getElementById('contact-phone')?.textContent || 
-                         '+74012615747';
+            const phone = appState.contactsData?.phone || '+74012615747';
             const cleanPhone = phone.replace(/[^\d+]/g, '');
             window.open(`tel:${cleanPhone}`, '_blank');
         }
 
         // Отправка команды в бот
         function sendToBot(command) {
-            // Отправляем данные обратно в бот
             tg.sendData(JSON.stringify({
                 command: command,
                 source: 'webapp'
             }));
-            
-            // Закрываем мини-приложение
             tg.close();
         }
 
-        // Инициализация при загрузке
-        document.addEventListener('DOMContentLoaded', function() {
-            loadContactData();
-        });
-
         // Обработка нажатия кнопки "Назад" в Telegram
         tg.BackButton.onClick(function() {
-            const visibleSection = document.querySelector('.section:not(.hidden)');
-            if (visibleSection) {
-                // Скрываем все секции, показываем главное меню
-                document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
-                tg.BackButton.hide();
-            } else {
-                tg.close();
-            }
+            goBack();
         });
 
-        // Показываем кнопку "Назад" при открытии секции
-        const originalShowSection = showSection;
-        showSection = function(sectionName) {
-            originalShowSection(sectionName);
-            tg.BackButton.show();
-        };
+        // Инициализация главного меню
+        showSection('main-menu');
     </script>
 </body>
 </html>
-
